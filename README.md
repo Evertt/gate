@@ -71,7 +71,6 @@ gate.addPolicy {
     // also be allowed to create posts
     ability.insert(.create)
 
-
     // Authors of posts should be able
     // to update and delete their posts
     if user.name == post?.author {
@@ -95,17 +94,24 @@ let johnsPost = Post(author: "John")
 // All of the following statements print "true"
 
 print(guest.can(.read, jonhsPost))
-print(guest.cant(.create, Post.self))
+print(guest.cannot(.create, Post.self))
 
 print(jane.can(.create, Post.self))
-print(jane.cant(.update, jonhsPost))
-print(jane.cant(.delete, jonhsPost))
+print(jane.cannot(.update, jonhsPost))
+print(jane.cannot(.delete, jonhsPost))
 
 print(john.can(.update, jonhsPost))
 print(john.can(.delete, jonhsPost))
 
-print(admin.can(.update, jonhsPost))
-print(admin.can(.delete, jonhsPost))
+// You can also pass an array of abilities
+// which would only return true
+// if the user can do all of them
+print(admin.can([.update, .delete], jonhsPost))
+
+// If you haven't conformed User to Authorizable
+// then you can do the above checks like so
+
+print(gate.check(admin, can: .delete, johnsPost))
 
 // If you prefer to throw and catch errors,
 // the following would throw an Unauthorized error

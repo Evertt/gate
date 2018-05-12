@@ -63,17 +63,14 @@ final class GateTests: XCTestCase {
         let jonhsPost = Post(author: "John")
         
         XCTAssert(guest.can(.read, jonhsPost))
-        XCTAssert(guest.cant(.create, Post.self))
+        XCTAssert(guest.cannot(.create, Post.self))
         
         XCTAssert(jane.can(.create, Post.self))
-        XCTAssert(jane.cant(.update, jonhsPost))
-        XCTAssert(jane.cant(.delete, jonhsPost))
+        XCTAssert(jane.cannot(.update, jonhsPost))
+        XCTAssert(jane.cannot(.delete, jonhsPost))
         
-        XCTAssert(john.can(.update, jonhsPost))
-        XCTAssert(john.can(.delete, jonhsPost))
-        
-        XCTAssert(admin.can(.update, jonhsPost))
-        XCTAssert(admin.can(.delete, jonhsPost))
+        XCTAssert(john.can([.update, .delete], jonhsPost))
+        XCTAssert(admin.can([.update, .delete], jonhsPost))
     }
 
 
