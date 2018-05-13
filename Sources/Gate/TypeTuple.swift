@@ -7,7 +7,7 @@ struct TypeTuple: Hashable {
 }
 
 extension Dictionary where Key == TypeTuple, Value == [Any] {
-    subscript<User,Object,Ability:AbilitySet>(_ userType: User.Type,_ objectType: Object.Type, _ ability: Ability.Type) -> [Policy<User,Object,Ability>] {
+    subscript<User,Object,Ability:AbilitySet>(_ userType: User.Type,_ objectType: Object.Type) -> [Policy<User,Object,Ability>] {
         get {
             let hash = TypeTuple(User.self, Object.self)
             return self[hash] as? [Policy<User,Object,Ability>] ?? []

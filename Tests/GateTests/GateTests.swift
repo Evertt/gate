@@ -60,17 +60,19 @@ final class GateTests: XCTestCase {
         let john  = User(name: "John",  isSuperAdmin: false)
         let admin = User(name: "Admin", isSuperAdmin: true)
         
-        let jonhsPost = Post(author: "John")
+        let johnsPost = Post(author: "John")
         
-        XCTAssert(guest.can(.read, jonhsPost))
+        XCTAssert(guest.can(.read, johnsPost))
         XCTAssert(guest.cannot(.create, Post.self))
         
         XCTAssert(jane.can(.create, Post.self))
-        XCTAssert(jane.cannot(.update, jonhsPost))
-        XCTAssert(jane.cannot(.delete, jonhsPost))
+        XCTAssert(jane.cannot(.update, johnsPost))
+        XCTAssert(jane.cannot(.delete, johnsPost))
         
-        XCTAssert(john.can([.update, .delete], jonhsPost))
-        XCTAssert(admin.can([.update, .delete], jonhsPost))
+        XCTAssert(john.can([.update, .delete], johnsPost))
+        XCTAssert(admin.can([.update, .delete], johnsPost))
+        
+        XCTAssertThrowsError(try gate.ensure(jane, can: .update, johnsPost))
     }
 
 

@@ -14,20 +14,12 @@ public extension Authorizable {
         return Optional(self).can(ability, type)
     }
     
-    func cant<Object>(_ ability: Ability, _ object: Object?) -> Bool {
+    func cannot<Object>(_ ability: Ability, _ object: Object?) -> Bool {
         return !can(ability, object)
     }
     
-    func cant<Object>(_ ability: Ability, _ type: Object.Type) -> Bool {
-        return !can(ability, type)
-    }
-    
-    func cannot<Object>(_ ability: Ability, _ object: Object?) -> Bool {
-        return cant(ability, object)
-    }
-    
     func cannot<Object>(_ ability: Ability, _ type: Object.Type) -> Bool {
-        return cant(ability, type)
+        return !can(ability, type)
     }
 }
 
@@ -40,19 +32,11 @@ public extension Optional where Wrapped: Authorizable {
         return Wrapped.gate.check(self, can: ability, type)
     }
     
-    func cant<Object>(_ ability: Wrapped.Ability, _ object: Object?) -> Bool {
+    func cannot<Object>(_ ability: Wrapped.Ability, _ object: Object?) -> Bool {
         return !can(ability, object)
     }
     
-    func cant<Object>(_ ability: Wrapped.Ability, _ type: Object.Type) -> Bool {
-        return !can(ability, type)
-    }
-    
-    func cannot<Object>(_ ability: Wrapped.Ability, _ object: Object?) -> Bool {
-        return cant(ability, object)
-    }
-    
     func cannot<Object>(_ ability: Wrapped.Ability, _ type: Object.Type) -> Bool {
-        return cant(ability, type)
+        return !can(ability, type)
     }
 }
