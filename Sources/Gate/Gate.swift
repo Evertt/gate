@@ -5,10 +5,12 @@ public class Gate<Ability: AbilitySet> {
     }
     
     let mode: Mode
+    let checkAllPolicies: Bool
     var policies: [TypeTuple:[Any]] = [:]
     
-    public init(mode: Mode = .giveRights) {
+    public init(mode: Mode = .giveRights, checkAllPolicies: Bool = false) {
         self.mode = mode
+        self.checkAllPolicies = checkAllPolicies
     }
 }
 
@@ -45,10 +47,10 @@ extension Gate {
         if let generalAbilities = getAbilities(
             from: policies[User.self, Any.self],
             user: user, object: object
-        ) {
+        ), !checkAllPolicies {
             return hasPermission(for: ability, given: generalAbilities)
         }
-        
+
         if let specificAbilities = getAbilities(
             from: policies[User.self, Object.self],
             user: user, object: object
@@ -72,21 +74,17 @@ extension Gate {
     }
     
     private func getAbilities<User,Object>(from policies: [Policy<User,Object,Ability>], user: User?, object: Object?) -> Ability? {
-        for policy in policies {
-            if let abilities = policy.getAbilities(user, object) {
-                return abilities
+        return policies.reduce(nil) { result, policy in
+            if !checkAllPolicies && result != nil {
+                return result
             }
+            
+            guard let abilities = policy.getAbilities(user, object) else {
+                return result
+            }
+
+            return (result ?? []).union(abilities)
         }
-        
-        return nil
-        
-//        return policies.reduce(Ability?.none) { result, policy in
-//            guard let abilities = policy.getAbilities(user, object) else {
-//                return result
-//            }
-//
-//            return (result ?? []).union(abilities)
-//        }
     }
     
     private func hasPermission(for ability: Ability, given abilities: Ability) -> Bool {

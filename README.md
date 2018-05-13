@@ -159,12 +159,20 @@ So this policy says "I _do_ care if a user is authenticated and if s/he is not, 
 
 By the way, it's okay to have multiple `before` policies and multiple "normal" policies for the same object. The gate will just check them one by one and the first one that returns anything other than nil will decide what the user can and cannot do.
 
-### Finally
+### Give rights, or take rights
 
-In the above examples the policies gave rights to the user. If you'd check an ability for which no policy exists (e.g. `user.can(.delete, user)`) then the gate defaults to `false`. However, that is only because right now the `Gate` is configured such that policies give rights. You can also configure `Gate` such that policies take rights away and in that case, if no relevant policy is defined for a particular use-case, `Gate` defaults to `true`.
+In the above examples the policies gave rights to the user. If you'd check an ability for which no policy exists (e.g. `user.can(.delete, user)`) then the gate defaults to `false`. However, that is only because right now the `Gate` is configured such that policies give rights so the starting point is that no rights are given yet. You can also configure `Gate` such that policies take rights away and in that case, if no relevant policy is defined for a particular use-case, `Gate` defaults to all rights being given.
 
 Here's how you define `Gate` such that policies take rights away.
 
 ```swift
 let gate = Gate<Ability>(mode: .takeRights)
+```
+
+### Finally
+
+By default `Gate` is configured to only listen to the first policy that returns a non-nil response. However, you can also configure `Gate` to listen to all policies and add up all the rights they give or take away (depending on which mode you're in).
+
+```swift
+let gate = Gate<Ability>(checkAllPolicies: true)
 ```

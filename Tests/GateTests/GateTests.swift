@@ -20,11 +20,12 @@ struct Post {
 }
 
 extension User: Authorizable {
-    static let gate = Gate<Ability>()
+    static var gate = Gate<Ability>()
 }
 
 final class GateTests: XCTestCase {
     func testExample() {
+        User.gate = Gate<Ability>()
         let gate = User.gate
         
         gate.before {
@@ -74,9 +75,27 @@ final class GateTests: XCTestCase {
         
         XCTAssertThrowsError(try gate.ensure(jane, can: .update, johnsPost))
     }
+    
+    func testCheckingAllPolicies() {
+        let jane = User(name: "Jane", isSuperAdmin: false)
 
+        var gate = Gate<Ability>(checkAllPolicies: false)
+        setUpPolicies(on: gate)
+        XCTAssert(gate.check(jane, cannot: .read, Any.self))
+        
+        gate = Gate<Ability>(checkAllPolicies: true)
+        setUpPolicies(on: gate)
+        XCTAssert(gate.check(jane, can: .read, Any.self))
+    }
+
+    func setUpPolicies(on gate: Gate<Ability>) {
+        gate.before { (user: User) in user.isSuperAdmin ? [.create, .read, .update, .delete] : [] }
+        
+        gate.before { (user: User?) in user != nil ? .read : nil }
+    }
 
     static var allTests = [
         ("testExample", testExample),
+        ("testCheckingAllPolicies", testCheckingAllPolicies),
     ]
 }
