@@ -122,3 +122,39 @@ do {
     print(error)
 }
 ```
+
+## But wait, there's more...
+
+You might have noticed that in my `before` policy I defined `user` as non-optional, but in my other policy I did define both `user` and `post` as optional. `Gate` assumes that if you define your `user` and/or `object` as non-optional in your policy, that when they do happen to be nil, that your policy has no opinion about that situation and that `Gate` should skip your policy.
+
+Let me show you some examples to explain that further. Let's pretend we haven't written any policies yet and we're starting from scratch.
+
+```swift
+gate.before {
+    (user: User) in
+
+    if user.isSuperAdmin {
+        return [.create, .read, .update, .delete]
+    }
+
+    return nil
+}
+```
+
+Just like before this means that if a user is a super admin they are allowed to do anything and otherwise this policy has no opinion. However, if you want to make sure that a user *has to be authenticated* to get any rights whatsoever, we could write the following.
+
+```swift
+gate.before {
+    (user: User?) in
+
+    guard let user = user else {
+        return []
+    }
+
+    return nil
+}
+```
+
+So this policy says "I _do_ care if a user is authenticated and if s/he is not, then the user has no rights whatsoever. If the user _is_ authenticated then I don't have any opinions about that".
+
+By the way, it's okay to have multiple `before` policies and multiple "normal" policies for the same object. The gate will just check them one by one and the first one that returns anything other than nil will decide what the user can and cannot do.

@@ -72,13 +72,21 @@ extension Gate {
     }
     
     private func getAbilities<User,Object>(from policies: [Policy<User,Object,Ability>], user: User?, object: Object?) -> Ability? {
-        return policies.reduce(Ability?.none) { result, policy in
-            guard let abilities = policy.getAbilities(user, object) else {
-                return result
+        for policy in policies {
+            if let abilities = policy.getAbilities(user, object) {
+                return abilities
             }
-            
-            return (result ?? []).union(abilities)
         }
+        
+        return nil
+        
+//        return policies.reduce(Ability?.none) { result, policy in
+//            guard let abilities = policy.getAbilities(user, object) else {
+//                return result
+//            }
+//
+//            return (result ?? []).union(abilities)
+//        }
     }
     
     private func hasPermission(for ability: Ability, given abilities: Ability) -> Bool {
