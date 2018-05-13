@@ -1,7 +1,11 @@
-public class Gate<Ability: AbilitySet> {
+public class Gate<Ability> where Ability: AbilitySet {
     public enum Mode {
         case giveRights
         case takeRights
+        
+        var defaultPolicy: Bool {
+            return self == .takeRights
+        }
     }
     
     let mode: Mode
@@ -43,33 +47,37 @@ extension Gate {
 }
 
 extension Gate {
-    public func check<User, Object>(_ user: User?, can ability: Ability, _ object: Object?) -> Bool {
-        if let generalAbilities = getAbilities(
+    public func check<User,Object>(_ user: User?, can ability: Ability, _ object: Object?) -> Bool {
+        let generalAbilities = getAbilities(
             from: policies[User.self, Any.self],
             user: user, object: object
-        ), !checkAllPolicies {
+        )
+        
+        if !checkAllPolicies, let generalAbilities = generalAbilities {
             return hasPermission(for: ability, given: generalAbilities)
         }
-
-        if let specificAbilities = getAbilities(
+        
+        let specificAbilities = getAbilities(
             from: policies[User.self, Object.self],
             user: user, object: object
-        ) {
-            return hasPermission(for: ability, given: specificAbilities)
+        )
+
+        if let specificAbilities = specificAbilities {
+            return hasPermission(for: ability, given: specificAbilities.union(generalAbilities ?? []))
         }
         
-        return mode == .takeRights
+        return mode.defaultPolicy
     }
     
-    public func check<User, Object>(_ user: User?, cannot ability: Ability, _ object: Object?) -> Bool {
+    public func check<User,Object>(_ user: User?, cannot ability: Ability, _ object: Object?) -> Bool {
         return !check(user, can: ability, object)
     }
     
-    public func check<User, Object>(_ user: User?, can ability: Ability, _ type: Object.Type) -> Bool {
+    public func check<User,Object>(_ user: User?, can ability: Ability, _ type: Object.Type) -> Bool {
         return check(user, can: ability, Object?.none)
     }
     
-    public func check<User, Object>(_ user: User?, cannot ability: Ability, _ type: Object.Type) -> Bool {
+    public func check<User,Object>(_ user: User?, cannot ability: Ability, _ type: Object.Type) -> Bool {
         return !check(user, can: ability, type)
     }
     
@@ -95,13 +103,13 @@ extension Gate {
 }
 
 extension Gate {
-    public func ensure<User, Object>(_ user: User?, can ability: Ability, _ object: Object?) throws {
+    public func ensure<User,Object>(_ user: User?, can ability: Ability, _ object: Object?) throws {
         guard check(user, can: ability, object) else {
             throw Unauthorized(user: user, ability: ability, object: object)
         }
     }
 
-    public func ensure<User, Object>(_ user: User?, can ability: Ability, _ type: Object.Type) throws {
+    public func ensure<User,Object>(_ user: User?, can ability: Ability, _ type: Object.Type) throws {
         try ensure(user, can: ability, Object?.none)
     }
 }
