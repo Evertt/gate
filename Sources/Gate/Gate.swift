@@ -10,7 +10,7 @@ public class Gate<Ability> where Ability: AbilitySet {
     
     let mode: Mode
     let checkAllPolicies: Bool
-    var policies: [TypeTuple:[Any]] = [:]
+    var policies = PolicyCollection<Ability>()
     
     public init(mode: Mode = .giveRights, checkAllPolicies: Bool = false) {
         self.mode = mode
