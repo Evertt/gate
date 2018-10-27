@@ -5,7 +5,7 @@ public protocol AbilitySet:
     where RawValue: FixedWidthInteger {}
 
 extension AbilitySet {
-    var all: [Self] {
+    public var all: [Self] {
         return rawValue.bitComponents.map(Self.init)
     }
     
@@ -20,6 +20,8 @@ extension FixedWidthInteger {
     }
     
     var bitComponents: [Self] {
-        return (0 ..< 8*MemoryLayout<Self>.size).map({1 << $0}).filter({self & $0 != 0})
+        return (0..<8*MemoryLayout<Self>.size)
+            .map { 1 << $0 }
+            .filter { self & $0 != 0 }
     }
 }

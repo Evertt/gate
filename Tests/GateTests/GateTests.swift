@@ -1,28 +1,6 @@
 import XCTest
 @testable import Gate
 
-struct Ability: AbilitySet {
-    static let create : Ability = 0
-    static let read   : Ability = 1
-    static let update : Ability = 2
-    static let delete : Ability = 3
-
-    let rawValue: Int
-}
-
-struct User {
-    let name: String
-    let isSuperAdmin: Bool
-}
-
-struct Post {
-    let author: String
-}
-
-extension User: Authorizable {
-    static var gate = Gate<Ability>()
-}
-
 final class GateTests: XCTestCase {
     func testExample() {
         User.gate = Gate<Ability>()
@@ -74,6 +52,18 @@ final class GateTests: XCTestCase {
         XCTAssert(admin.can([.update, .delete], johnsPost))
         
         XCTAssertThrowsError(try gate.ensure(jane, can: .update, johnsPost))
+        
+        do {
+            try gate.ensure(jane, can: [.update, .delete], johnsPost)
+        } catch {
+            XCTAssertEqual("\(error)", "Jane is not allowed to update and delete John's post")
+        }
+        
+        do {
+            try gate.ensure(jane, can: [], john)
+        } catch {
+            XCTAssertEqual("\(error)", "Jane is not allowed to do anything to John")
+        }
     }
     
     func testCheckingAllPolicies() {

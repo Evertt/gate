@@ -1,11 +1,17 @@
 public struct Unauthorized: Error {
-    let user: Any?
-    let ability: Any
-    let object: Any?
+    public let user: Any
+    public let ability: Any
+    public let object: Any
     
     init<User,Object,Ability:AbilitySet>(user: User?, ability: Ability, object: Object?) {
-        self.user = user
+        self.user = user ?? User.self
         self.ability = ability
-        self.object = object
+        self.object = object ?? Object.self
+    }
+}
+
+extension Unauthorized: CustomStringConvertible {
+    public var description: String {
+        return "\(user) is not allowed to \(ability) \(object)"
     }
 }
