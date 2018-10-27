@@ -20,11 +20,11 @@ public class Gate<Ability> where Ability: AbilitySet {
 
 extension Gate {
     public func before<User>(policy: @escaping (User) -> Ability?) {
-        policies[User.self, Any.self].append(Policy<User,Any,Ability>(policy))
+        policies[User.self].append(Policy(policy))
     }
     
     public func before<User>(policy: @escaping (User?) -> Ability?) {
-        policies[User.self, Any.self].append(Policy<User,Any,Ability>(policy))
+        policies[User.self].append(Policy(policy))
     }
 }
 
@@ -49,7 +49,7 @@ extension Gate {
 extension Gate {
     public func check<User,Object>(_ user: User?, can ability: Ability, _ object: Object?) -> Bool {
         let generalAbilities = getAbilities(
-            from: policies[User.self, Any.self],
+            from: policies[User.self],
             user: user, object: object
         )
         

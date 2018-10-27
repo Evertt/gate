@@ -9,7 +9,7 @@ extension AbilitySet {
         return rawValue.bitComponents.map(Self.init)
     }
     
-    public init(integerLiteral value: UInt) {
+    public init(integerLiteral value: RawValue) {
         self.init(rawValue: 1 << value)
     }
 }
