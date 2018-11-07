@@ -2,6 +2,8 @@
 
 ## Usage
 
+### Setup
+
 Define your entities.
 
 ```swift
@@ -36,7 +38,7 @@ extension User: Authorizable {
 }
 ```
 
-Now define your policies.
+### Defining policies
 
 ```swift
 let gate = User.gate
@@ -81,7 +83,7 @@ gate.addPolicy {
 }
 ```
 
-And finally, now you can test your policies.
+### Checking policies
 
 ```swift
 let guest : User? = nil
