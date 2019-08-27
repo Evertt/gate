@@ -93,27 +93,27 @@ let admin = User(name: "Admin", isSuperAdmin: true)
 
 let johnsPost = Post(author: "John")
 
-// All of the following statements print "true"
+// All of the following statements evaluate to true
 
-print(guest.can(.read, jonhsPost))
-print(guest.cannot(.create, Post.self))
+guest.can(.read, jonhsPost)
+guest.cannot(.create, Post.self)
 
-print(jane.can(.create, Post.self))
-print(jane.cannot(.update, jonhsPost))
-print(jane.cannot(.delete, jonhsPost))
+jane.can(.create, Post.self)
+jane.cannot(.update, jonhsPost)
+jane.cannot(.delete, jonhsPost)
 
-print(john.can(.update, jonhsPost))
-print(john.can(.delete, jonhsPost))
+john.can(.update, jonhsPost)
+john.can(.delete, jonhsPost)
 
 // You can also pass an array of abilities
 // which would only return true
 // if the user can do all of them
-print(admin.can([.update, .delete], jonhsPost))
+admin.can([.update, .delete], jonhsPost)
 
 // If you haven't conformed User to Authorizable
 // then you can do the above checks like so
 
-print(gate.check(admin, can: .delete, johnsPost))
+gate.check(admin, can: .delete, johnsPost)
 
 // If you prefer to throw and catch errors,
 // the following would throw an Unauthorized error
