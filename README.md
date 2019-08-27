@@ -21,10 +21,10 @@ Define your users' abilities.
 
 ```swift
 struct Ability: AbilitySet {
-    static let create : Ability = 0 // This does not become the rawValue.
-    static let read   : Ability = 1 // This number represents which bit
-    static let update : Ability = 2 // in the rawValue's bitmask is turned on.
-    static let delete : Ability = 3 // E.g. for delete the 4th bit is turned on.
+    static let create : Ability = 0
+    static let read   : Ability = 1
+    static let update : Ability = 2
+    static let delete : Ability = 3
 
     let rawValue: Int
 }
