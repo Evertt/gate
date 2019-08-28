@@ -1,5 +1,7 @@
 # Gate
 
+Gate provides a simple way to authorize user actions against a given resource.
+
 ## Usage
 
 ### Setup
