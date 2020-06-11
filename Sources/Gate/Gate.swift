@@ -47,26 +47,36 @@ extension Gate {
 }
 
 extension Gate {
-    public func check<User,Object>(_ user: User?, can ability: Ability, _ object: Object?) -> Bool {
+    
+    public func check<User,Object>(_ user: User?, _ object: Object?) -> Ability? {
         let generalAbilities = getAbilities(
             from: policies[User.self],
             user: user, object: object
         )
         
         if !checkAllPolicies, let generalAbilities = generalAbilities {
-            return hasPermission(for: ability, given: generalAbilities)
+            return generalAbilities
         }
         
         let specificAbilities = getAbilities(
             from: policies[User.self, Object.self],
             user: user, object: object
         )
-
+        
         if let specificAbilities = specificAbilities {
-            return hasPermission(for: ability, given: specificAbilities.union(generalAbilities ?? []))
+            return specificAbilities.union(generalAbilities ?? [])
         }
         
-        return mode.defaultPolicy
+        return nil
+    }
+    
+    public func check<User,Object>(_ user: User?, can ability: Ability, _ object: Object?) -> Bool {
+        
+        guard let abilities = check(user, object) else {
+            return mode.defaultPolicy
+        }
+        
+        return hasPermission(for: ability, given: abilities)
     }
     
     public func check<User,Object>(_ user: User?, cannot ability: Ability, _ object: Object?) -> Bool {
