@@ -3,7 +3,10 @@ public protocol AbilitySet:
     OptionSet,
     ExpressibleByIntegerLiteral,
     Collection
-    where RawValue: FixedWidthInteger {}
+    where RawValue: FixedWidthInteger {
+    
+    static var allCases: Array<Self> { get }
+}
 
 public extension AbilitySet {
     var all: [Self] {
@@ -12,10 +15,6 @@ public extension AbilitySet {
     
     init(integerLiteral value: RawValue) {
         self.init(rawValue: 1 << value)
-    }
-    
-    static var allCases: Self {
-        return Self(rawValue: RawValue.max)
     }
 }
 
