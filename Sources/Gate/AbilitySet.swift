@@ -5,7 +5,7 @@ public protocol AbilitySet:
     Collection
     where RawValue: FixedWidthInteger {
     
-    static var allCases: Array<Self> { get }
+    static var allCases: Self { get }
 }
 
 public extension AbilitySet {
