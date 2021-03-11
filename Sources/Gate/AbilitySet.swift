@@ -1,15 +1,19 @@
 public protocol AbilitySet:
     Hashable,
     OptionSet,
-    ExpressibleByIntegerLiteral
-    where RawValue: FixedWidthInteger {}
+    ExpressibleByIntegerLiteral,
+    Collection
+    where RawValue: FixedWidthInteger {
+    
+    static var allCases: Self { get }
+}
 
-extension AbilitySet {
-    public var all: [Self] {
+public extension AbilitySet {
+    var all: [Self] {
         return rawValue.bitComponents.map(Self.init)
     }
     
-    public init(integerLiteral value: RawValue) {
+    init(integerLiteral value: RawValue) {
         self.init(rawValue: 1 << value)
     }
 }
